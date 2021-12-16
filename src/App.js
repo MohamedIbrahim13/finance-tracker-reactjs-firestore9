@@ -1,25 +1,48 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { useAuth } from "./hooks/useAuth";
+import Navbar from "./components/Navbar";
+import Home from "./pages/home/Home";
+import Login from "./pages/login/Login";
+import Signup from "./pages/signup/Signup";
 
 function App() {
+  const { authIsReady } = useAuth();
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {authIsReady && (
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route exact path="/" element={<PrivateHome />}>
+              <Route element={<Home />} />
+            </Route>
+			<Route path="/login" element={<PrivateLogin />}>
+              <Route element={<Login />} />
+            </Route>
+            <Route path="/signup" element={<PrivateRegister />}>
+              <Route element={<Signup />} />
+            </Route>
+            
+          </Routes>
+        </BrowserRouter>
+      )}
     </div>
   );
 }
 
 export default App;
+
+function PrivateHome() {
+  const { user } = useAuth();
+  return user ? <Home /> : <Navigate to="/login" />;
+}
+
+function PrivateRegister() {
+  const { user } = useAuth();
+  return user && user.displayName ? <Navigate to="/" /> : <Signup />;
+}
+
+function PrivateLogin() {
+  const { user } = useAuth();
+  return user ? <Navigate to="/" /> : <Login />;
+}
