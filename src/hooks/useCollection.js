@@ -27,14 +27,14 @@ export const useCollection = (c, _q, _orderBy) => {
       if (snapshot.empty) {
         setIsPending(false);
         setError("No Transactions found!!!");
-      } else {
-        let newArr = [];
-        snapshot.docs.forEach(doc => {
-          newArr.push({ ...doc.data(), id: doc.id });
-        });
-        setIsPending(false);
-        setDocuments(newArr);
       }
+       let newArr = [];
+       snapshot.docs.forEach(doc => {
+         newArr.push({ ...doc.data(), id: doc.id });
+       });
+       setIsPending(false);
+       setDocuments(newArr);
+      
     });
     return () => unsubCollection();
   }, [c, q, orderby]);
